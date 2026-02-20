@@ -1,0 +1,45 @@
+name: Test — semver constraint expressions
+
+# Exercises the semver constraint syntax of the verification workflow.
+# Uses short release ranges so the job finishes in a reasonable time.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  # Recent tun2proxy releases (v0.7.17 – v0.7.19) — all attested, should pass
+  tun2proxy-recent:
+    name: tun2proxy >=0.7.17 (expect ✅)
+    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    with:
+      repository: tun2proxy/tun2proxy
+      tag: ">=0.7.17"
+    permissions:
+      contents: read
+      issues: write
+
+  # Caret range: matches all v0.7.x — same result, different expression
+  tun2proxy-caret:
+    name: tun2proxy ^0.7.19 (expect ✅)
+    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    with:
+      repository: tun2proxy/tun2proxy
+      tag: "^0.7.19"
+    permissions:
+      contents: read
+      issues: write
+
+  # Old tun2proxy releases that pre-date attestations — should fail + open issue
+  tun2proxy-old:
+    name: tun2proxy <0.5.0 (expect ❌ + issue)
+    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    with:
+      repository: tun2proxy/tun2proxy
+      tag: "<0.5.0"
+      limit: 3
+      open-issue: true
+    permissions:
+      contents: read
+      issues: write
