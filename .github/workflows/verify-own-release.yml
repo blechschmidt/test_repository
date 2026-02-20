@@ -1,0 +1,20 @@
+name: Verify Own Signed Release
+
+# Verifies that artifacts in a release of this repository have valid GitHub
+# attestations, using the reusable verification workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to verify (e.g. v0.1.0). Leave empty to check all releases.'
+        required: false
+        default: 'v0.1.0'
+
+jobs:
+  verify:
+    name: Verify ${{ inputs.tag || 'all releases' }} of test_repository
+    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    with:
+      repository: blechschmidt/test_repository
+      tag: ${{ inputs.tag }}

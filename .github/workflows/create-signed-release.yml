@@ -1,0 +1,81 @@
+name: Create Signed Release
+
+# Builds a simple artifact, attests its provenance using GitHub's artifact
+# attestation, and publishes a GitHub release containing the signed artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+permissions:
+  contents: write      # needed to create releases
+  id-token: write      # needed to obtain OIDC token for signing
+  attestations: write  # needed to store the attestation
+
+jobs:
+  release:
+    name: Build, attest, and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build artifact
+        run: |
+          cat > hello.sh << 'EOF'
+          #!/usr/bin/env bash
+          # Simple demo artifact for attestation testing
+          echo "Hello from a signed release artifact!"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Ref:        $GITHUB_REF"
+          EOF
+          chmod +x hello.sh
+          # Also produce a tiny compiled binary so we have a non-shell artifact
+          cat > hello.c << 'EOF'
+          #include <stdio.h>
+          int main(void) {
+              printf("Hello from a signed binary!\n");
+              return 0;
+          }
+          EOF
+          gcc -o hello hello.c
+          sha256sum hello hello.sh > SHA256SUMS
+
+      - name: Attest build provenance for shell script
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: hello.sh
+
+      - name: Attest build provenance for binary
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: hello
+
+      - name: Attest build provenance for checksum file
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: SHA256SUMS
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            hello \
+            hello.sh \
+            SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Signed release $TAG" \
+            --notes "$(cat << 'EOF'
+          This release was built by GitHub Actions and all artifacts have been
+          attested with [GitHub artifact attestation](https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
+
+          Verify with:
+          ```
+          gh attestation verify <artifact> --repo $GITHUB_REPOSITORY
+          ```
+          EOF
+          )"
