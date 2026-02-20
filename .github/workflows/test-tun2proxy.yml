@@ -1,7 +1,9 @@
-name: Test — tun2proxy (latest 5 releases)
+name: Test — tun2proxy (all releases)
 
-# Verifies artifact attestations for the 5 most recent releases of tun2proxy/tun2proxy.
-# tun2proxy uses GitHub's artifact attestation, so all release artifacts should pass.
+# Verifies artifact attestations across every release of tun2proxy/tun2proxy.
+# Recent releases use GitHub artifact attestation and should pass.
+# Older releases (pre-attestation era) are expected to fail, which will
+# trigger automatic issue creation on this repository.
 
 on:
   workflow_dispatch:
@@ -9,37 +11,13 @@ on:
     branches: [main]
 
 jobs:
-  verify-v0_7_19:
-    name: Verify tun2proxy v0.7.19
+  verify-all-releases:
+    name: Verify all tun2proxy releases
     uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: tun2proxy/tun2proxy
-      tag: v0.7.19
-
-  verify-v0_7_18:
-    name: Verify tun2proxy v0.7.18
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
-    with:
-      repository: tun2proxy/tun2proxy
-      tag: v0.7.18
-
-  verify-v0_7_17:
-    name: Verify tun2proxy v0.7.17
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
-    with:
-      repository: tun2proxy/tun2proxy
-      tag: v0.7.17
-
-  verify-v0_7_16:
-    name: Verify tun2proxy v0.7.16
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
-    with:
-      repository: tun2proxy/tun2proxy
-      tag: v0.7.16
-
-  verify-v0_7_15:
-    name: Verify tun2proxy v0.7.15
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
-    with:
-      repository: tun2proxy/tun2proxy
-      tag: v0.7.15
+      # No tag → checks every release
+      open-issue: true
+    permissions:
+      contents: read
+      issues: write

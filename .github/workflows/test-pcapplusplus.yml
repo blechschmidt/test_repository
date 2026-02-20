@@ -1,8 +1,8 @@
-name: Test — PcapPlusPlus (latest release)
+name: Test — PcapPlusPlus (all releases)
 
-# Verifies artifact attestations for the most recent release of seladb/PcapPlusPlus.
-# PcapPlusPlus may not use GitHub artifact attestations, in which case this job
-# is expected to fail — demonstrating the workflow correctly detects unsigned artifacts.
+# Verifies artifact attestations across every release of seladb/PcapPlusPlus.
+# The latest release (v25.05) uses GitHub attestations and passes.
+# Older releases are expected to fail, triggering automatic issue creation.
 
 on:
   workflow_dispatch:
@@ -10,9 +10,13 @@ on:
     branches: [main]
 
 jobs:
-  verify-latest:
-    name: Verify PcapPlusPlus (latest release)
+  verify-all-releases:
+    name: Verify all PcapPlusPlus releases
     uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: seladb/PcapPlusPlus
-      limit: 1
+      # No tag → checks every release
+      open-issue: true
+    permissions:
+      contents: read
+      issues: write
