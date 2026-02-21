@@ -12,7 +12,7 @@ jobs:
   # Recent tun2proxy releases (v0.7.17 – v0.7.19) — all attested, should pass
   tun2proxy-recent:
     name: tun2proxy >=0.7.17 (expect ✅)
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    uses: blechschmidt/artifact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: tun2proxy/tun2proxy
       tag: ">=0.7.17"
@@ -23,7 +23,7 @@ jobs:
   # Caret range: matches all v0.7.x — same result, different expression
   tun2proxy-caret:
     name: tun2proxy ^0.7.19 (expect ✅)
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    uses: blechschmidt/artifact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: tun2proxy/tun2proxy
       tag: "^0.7.19"
@@ -35,7 +35,7 @@ jobs:
   # v0.4.x and later are all attested; v0.2.x and earlier are not.
   tun2proxy-old:
     name: tun2proxy <0.3.0 (expect ❌ + issue)
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    uses: blechschmidt/artifact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: tun2proxy/tun2proxy
       tag: "<0.3.0"

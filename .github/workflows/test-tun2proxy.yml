@@ -13,7 +13,7 @@ on:
 jobs:
   verify-all-releases:
     name: Verify all tun2proxy releases
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    uses: blechschmidt/artifact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: tun2proxy/tun2proxy
       # No tag → checks every release

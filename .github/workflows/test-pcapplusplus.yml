@@ -12,7 +12,7 @@ on:
 jobs:
   verify-all-releases:
     name: Verify all PcapPlusPlus releases
-    uses: blechschmidt/aritfact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
+    uses: blechschmidt/artifact-attestation-verification-action/.github/workflows/verify-attestations.yml@main
     with:
       repository: seladb/PcapPlusPlus
       # No tag → checks every release
